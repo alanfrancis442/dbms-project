@@ -35,6 +35,8 @@ interface Column {
   foreignKeyTable?: string;
   foreignKeyColumn?: string;
   length?: string; // Added length property
+  onDeleteAction?: string; // Added for cascade on delete
+  onUpdateAction?: string; // Added for cascade on update
 }
 
 const DATABASE_TYPES = [
@@ -43,6 +45,14 @@ const DATABASE_TYPES = [
   "SQLite",
   "SQL Server",
   "Oracle",
+];
+
+const CASCADE_OPTIONS = [
+  "CASCADE",
+  "SET NULL",
+  "SET DEFAULT",
+  "RESTRICT",
+  "NO ACTION",
 ];
 
 const DATA_TYPES = [
@@ -96,6 +106,8 @@ export default function CreateTablePage() {
       defaultValue: "",
       isForeignKey: false,
       length: "255", // Default length for varchar
+      onDeleteAction: "NO ACTION", // Default action for ON DELETE
+      onUpdateAction: "NO ACTION", // Default action for ON UPDATE
     },
   ]);
   const [existingTables, setExistingTables] = useState<Table[]>([]);
@@ -179,6 +191,8 @@ export default function CreateTablePage() {
         defaultValue: "",
         isForeignKey: false,
         length: "255", // Default length for varchar
+        onDeleteAction: "NO ACTION", // Default action for ON DELETE
+        onUpdateAction: "NO ACTION", // Default action for ON UPDATE
       },
     ]);
   };
@@ -205,6 +219,8 @@ export default function CreateTablePage() {
     if (field === "isForeignKey" && value === false) {
       newColumns[index].foreignKeyTable = undefined;
       newColumns[index].foreignKeyColumn = undefined;
+      newColumns[index].onDeleteAction = "NO ACTION";
+      newColumns[index].onUpdateAction = "NO ACTION";
     }
 
     // Set default length when type changes to varchar or char
@@ -248,6 +264,8 @@ export default function CreateTablePage() {
               ? {
                   table: col.foreignKeyTable,
                   column: col.foreignKeyColumn,
+                  onDelete: col.onDeleteAction, // Include ON DELETE action
+                  onUpdate: col.onUpdateAction, // Include ON UPDATE action
                 }
               : undefined,
         })),
@@ -270,6 +288,8 @@ export default function CreateTablePage() {
           defaultValue: "",
           isForeignKey: false,
           length: "255", // Default length for varchar
+          onDeleteAction: "NO ACTION",
+          onUpdateAction: "NO ACTION",
         },
       ]);
     } catch (error) {
@@ -528,60 +548,113 @@ export default function CreateTablePage() {
                       </div>
 
                       {column.isForeignKey && (
-                        <div className="ml-6 grid grid-cols-2 gap-2">
-                          <div>
-                            <label className="text-xs font-medium mb-1 block">
-                              Referenced Table
-                            </label>
-                            <Select
-                              value={column.foreignKeyTable}
-                              onValueChange={(value) =>
-                                updateColumn(index, "foreignKeyTable", value)
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select table" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {existingTables.map((table) => (
-                                  <SelectItem
-                                    key={table.name}
-                                    value={table.name}
-                                  >
-                                    {table.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                        <div className="ml-6 space-y-4">
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="text-xs font-medium mb-1 block">
+                                Referenced Table
+                              </label>
+                              <Select
+                                value={column.foreignKeyTable}
+                                onValueChange={(value) =>
+                                  updateColumn(index, "foreignKeyTable", value)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select table" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {existingTables.map((table) => (
+                                    <SelectItem
+                                      key={table.name}
+                                      value={table.name}
+                                    >
+                                      {table.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div>
+                              <label className="text-xs font-medium mb-1 block">
+                                Referenced Column
+                              </label>
+                              <Select
+                                value={column.foreignKeyColumn}
+                                disabled={!column.foreignKeyTable}
+                                onValueChange={(value) =>
+                                  updateColumn(index, "foreignKeyColumn", value)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select column" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {column.foreignKeyTable &&
+                                    existingTables
+                                      .find(
+                                        (t) => t.name === column.foreignKeyTable
+                                      )
+                                      ?.columns.map((col, index) => (
+                                        <SelectItem
+                                          key={index}
+                                          value={col.name}
+                                        >
+                                          {col.name}
+                                        </SelectItem>
+                                      ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
 
-                          <div>
-                            <label className="text-xs font-medium mb-1 block">
-                              Referenced Column
-                            </label>
-                            <Select
-                              value={column.foreignKeyColumn}
-                              disabled={!column.foreignKeyTable}
-                              onValueChange={(value) =>
-                                updateColumn(index, "foreignKeyColumn", value)
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select column" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {column.foreignKeyTable &&
-                                  existingTables
-                                    .find(
-                                      (t) => t.name === column.foreignKeyTable
-                                    )
-                                    ?.columns.map((col, index) => (
-                                      <SelectItem key={index} value={col.name}>
-                                        {col.name}
-                                      </SelectItem>
-                                    ))}
-                              </SelectContent>
-                            </Select>
+                          {/* New cascade options section */}
+                          <div className="grid grid-cols-2 gap-2 mt-2">
+                            <div>
+                              <label className="text-xs font-medium mb-1 block">
+                                ON DELETE
+                              </label>
+                              <Select
+                                value={column.onDeleteAction || "NO ACTION"}
+                                onValueChange={(value) =>
+                                  updateColumn(index, "onDeleteAction", value)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select action" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {CASCADE_OPTIONS.map((option) => (
+                                    <SelectItem key={option} value={option}>
+                                      {option}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium mb-1 block">
+                                ON UPDATE
+                              </label>
+                              <Select
+                                value={column.onUpdateAction || "NO ACTION"}
+                                onValueChange={(value) =>
+                                  updateColumn(index, "onUpdateAction", value)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select action" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {CASCADE_OPTIONS.map((option) => (
+                                    <SelectItem key={option} value={option}>
+                                      {option}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
                         </div>
                       )}
