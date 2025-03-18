@@ -152,7 +152,7 @@ export default function SQLEditorPage() {
             </div>
             <div className="border-t p-4">
               <h3 className="text-sm font-medium mb-2">Results</h3>
-              <ScrollArea className="h-[200px] rounded-md border">
+              <ScrollArea className="h-[300px] rounded-md border">
                 {results ? (
                   <div className="p-4">
                     {results.rows.length > 0 ? (

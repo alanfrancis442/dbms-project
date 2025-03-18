@@ -14,7 +14,7 @@ export function CodeEditor({
   value,
   onChange,
   language = "sql",
-  height = "500px",
+  height = "400px",
 }: MonacoEditorProps) {
   const monaco = useMonaco();
 
