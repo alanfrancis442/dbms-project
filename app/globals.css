@@ -80,3 +80,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@font-face {
+  font-family: "helvetica";
+  src: url(../public/HelveticaNeueMedium.otf);
+}
+
+
+/* Selection colors for dark theme */
+::selection {
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+}
+
+::-moz-selection {
+  background-color: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+}
+
+.dark ::selection {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+
+.dark ::-moz-selection {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
