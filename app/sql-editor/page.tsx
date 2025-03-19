@@ -20,6 +20,7 @@ import { CodeEditor } from "@/components/code-editor";
 import { useToast } from "@/hooks/use-toast";
 import { getDatabases, executeQuery } from "@/lib/db-service";
 import { Database } from "@/lib/types";
+import ChatBot from "./chat-bot";
 
 export default function SQLEditorPage() {
   const { toast } = useToast();
@@ -206,9 +207,10 @@ export default function SQLEditorPage() {
         <ResizableHandle />
 
         <ResizablePanel defaultSize={50}>
-          <div className="h-full flex items-center justify-center border-l text-muted-foreground">
+          {/* <div className="h-full flex items-center justify-center border-l text-muted-foreground">
             Chatbot interface will be implemented here
-          </div>
+          </div> */}
+          <ChatBot />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
