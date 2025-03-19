@@ -210,7 +210,10 @@ export default function SQLEditorPage() {
           {/* <div className="h-full flex items-center justify-center border-l text-muted-foreground">
             Chatbot interface will be implemented here
           </div> */}
-          <ChatBot />
+          <ChatBot
+            selectedDatabase={selectedDatabase}
+            databaseConnection={databaseConnection}
+          />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
