@@ -16,7 +16,7 @@ export function Navigation() {
           <div className="flex items-center space-x-8">
             <Link href="/" className="flex items-center space-x-2">
               <Database className="h-6 w-6" />
-              <span className="text-xl font-bold">DB Visualizer</span>
+              <span className="text-xl font-bold">DB FORGE</span>
             </Link>
 
             <div className="flex items-center space-x-4">

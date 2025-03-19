@@ -1,15 +1,15 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Toaster } from '@/components/ui/toaster';
-import { Navigation } from '@/components/navigation';
+import "./globals.css";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { Navigation } from "@/components/navigation";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'DB Relationship Visualizer',
-  description: 'Visualize database relationships with an interactive diagram',
+  title: "DB Relationship Visualizer",
+  description: "Visualize database relationships with an interactive diagram",
 };
 
 export default function RootLayout({
@@ -26,7 +26,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navigation />
           {children}
           <Toaster />
         </ThemeProvider>
